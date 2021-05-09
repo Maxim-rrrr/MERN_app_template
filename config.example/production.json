@@ -1,0 +1,12 @@
+{
+  "port": 5000,
+  "url_main_page": "localhost:4000",
+  "mongoUrl": "",
+  "emailSendMessage": "",
+  "passSendMessage": "",
+
+  "secret_key": "",
+  
+  "admin_login": "",
+  "admin_pass": ""
+}
