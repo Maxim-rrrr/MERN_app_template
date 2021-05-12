@@ -1,4 +1,6 @@
-import { createLogger, transports, format } from 'winston';
+import pkg from 'winston';
+const { createLogger, transports, format } = pkg;
+
 const { combine, timestamp, colorize, printf } = format;
 import config from 'config';
 
@@ -6,7 +8,7 @@ const myFormat = printf(({ level, message, timestamp }) => {
     return `${timestamp} ${level}: ${message}`;
 });
 
-require('winston-mongodb');
+import 'winston-mongodb';
 const logger = createLogger({
     transports: [
         new transports.Console({

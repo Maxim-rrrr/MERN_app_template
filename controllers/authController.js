@@ -1,5 +1,6 @@
-import User from './Schemes/User';
-import Role from './Schemes/Role';
+import User from '../Schemes/User.js';
+import Role from '../Schemes/Role.js';
+
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
@@ -73,4 +74,4 @@ class authController {
     }
 }
 
-module.exports = new authController()
+export default new authController()

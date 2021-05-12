@@ -1,4 +1,5 @@
-const {Schema, model} = require('mongoose')
+import pkg from 'mongoose';
+const {Schema, model} = pkg;
 
 
 const User = new Schema({
@@ -7,4 +8,4 @@ const User = new Schema({
     roles: [{type: String, ref: 'Role'}]
 })
 
-module.exports = model('User', User)
+export default model('User', User)

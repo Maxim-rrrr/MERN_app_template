@@ -2,9 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import config from "config";
 import path from "path";
-import logger from "./modules/logger";
 
-import authRouter from './routers/authRouter'
+import logger from "./modules/logger.js";
+import authRouter from './routers/authRouter.js'
 
 const app = express();
 
