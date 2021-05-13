@@ -16,6 +16,6 @@ router.post('/registration', [
 
 router.post('/login', controller.login)
 
-router.get('/users', roleMiddleware(["ADMIN"]), controller.getUsers)
+router.post('/is-admin', roleMiddleware(["ADMIN"]), async (req, res) => { res.send(true) })
 
 export default router
