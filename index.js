@@ -5,6 +5,7 @@ import path from "path";
 
 import logger from "./modules/logger.js";
 import authRouter from './routers/authRouter.js'
+import createRoles from "./modules/createRoles.js"
 
 const app = express();
 
@@ -32,10 +33,11 @@ async function start() {
       useUnifiedTopology: true,
     });
 
+    createRoles(['ADMIN', 'USER'])
+
     app.listen(PORT, () =>
       logger.info(`Запуск сервера порт: ${PORT}`)
     );
-
     
   } catch (err) {
     console.log("Ошибка запуска сервера.", err.message);
