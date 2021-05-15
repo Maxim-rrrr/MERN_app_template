@@ -6,6 +6,7 @@ import path from "path";
 import logger from "./modules/logger.js";
 import authRouter from './routers/authRouter.js'
 import createRoles from "./modules/createRoles.js"
+import { USER, ADMIN } from "./roles_list.js"
 
 const app = express();
 
@@ -33,7 +34,8 @@ async function start() {
       useUnifiedTopology: true,
     });
 
-    createRoles(['ADMIN', 'USER'])
+    // Создание ролей пользователей в БД
+    createRoles([ADMIN, USER]);
 
     app.listen(PORT, () =>
       logger.info(`Запуск сервера порт: ${PORT}`)
