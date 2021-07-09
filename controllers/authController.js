@@ -1,12 +1,11 @@
 import User from '../Schemes/User.js';
-import Role from '../Schemes/Role.js';
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import config from "config";
 
-import { USER } from '../roles_list.js';
+import service from '../services/authService.js'
 
 const generateAccessToken = (id, roles) => {
     const payload = {
@@ -27,16 +26,14 @@ class authController {
 
             const {username, password} = req.body;
 
-            const candidate = await User.findOne({username})
+            const candidate = await User.findOne({login: username})
             if (candidate) {
                 return res.status(400).json({message: "Пользователь с таким именем уже существует"})
             }
+
+            user = await service.registration(username, password)
             
-            const hashPassword = bcrypt.hashSync(password, 7);
-            const userRole = await Role.findOne({value: USER})
-            const user = new User({login: username, password: hashPassword, roles: [userRole.value]})
-            await user.save()
-            return res.json({message: "Пользователь успешно зарегистрирован"})
+            return res.json({message: "Пользователь успешно зарегистрирован", user: user})
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Registration error'})
