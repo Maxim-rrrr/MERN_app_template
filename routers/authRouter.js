@@ -18,4 +18,6 @@ router.post('/login', controller.login)
 
 router.post('/is-admin', roleMiddleware(["ADMIN"]), async (req, res) => { res.send(true) })
 
+router.post('/is-auth', roleMiddleware(["USER"]), async (req, res) => { res.send(true) })
+
 export default router
