@@ -8,6 +8,12 @@ import authRouter from './routers/authRouter.js'
 import createRoles from "./modules/createRoles.js"
 import { USER, ADMIN } from "./roles_list.js"
 
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import swaggerOptions from "./swaggerOptions.js"
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
 const app = express();
 
 app.use(express.json())
@@ -15,6 +21,8 @@ app.use("/auth", authRouter)
 
 app.use("/uploads", express.static("uploads"));
 app.use("/file", express.static("file"));
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 if (process.env.NODE_ENV === "production") {
   app.use("/", express.static(path.join(__dirname, "client", "build")));

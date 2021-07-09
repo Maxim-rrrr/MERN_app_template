@@ -36,6 +36,8 @@
     "normalize.css": "^8.0.1",
     "query-string": "^7.0.0",
     "react-router-dom": "^5.2.0",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6",
     "winston": "^3.3.3",
     "winston-mongodb": "^5.0.7"
   }
