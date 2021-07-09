@@ -79,16 +79,13 @@ const Login = () => {
         login: values.login,
         password: values.password 
       })
-
-      if (data.token) {
-        localStorage.setItem("admin_token", data.token)
-        document.location.reload()
-      } else {
-        setAlert(true)
-      }
+      
+      localStorage.setItem("admin_token", data.token)
+      document.location.reload()
 
     } catch (e) {
       console.log(e);
+      setAlert(true)
     }  
   }
 
