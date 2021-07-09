@@ -7,6 +7,9 @@ export const useHttp = () => {
   const request = useCallback(async (url, method = 'GET', body = null, formData = false, headers = {}) => {
     setLoading(true)
     try {
+      
+      headers.authorization = localStorage.getItem('auth_token')
+
       if (body && !formData) {
         body = JSON.stringify(body)
         headers['Content-Type'] = 'application/json'

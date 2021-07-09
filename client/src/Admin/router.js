@@ -11,12 +11,12 @@ const AdminRouter = () => {
   
   const checkToken = async () => {
     try {
-      const isAdmin = await request('/auth/is-admin', 'POST', {}, false, { authorization: localStorage.getItem('admin_token') })
+      const isAdmin = await request('/auth/is-admin', 'POST', {}, false)
       
       if (isAdmin) {
         setIsAdmin(true)
       } else {
-        localStorage.removeItem('token')
+        localStorage.removeItem('auth_token')
       }
 
     } catch (e) {
@@ -25,7 +25,7 @@ const AdminRouter = () => {
   }
 
   useEffect(() => {
-    if (localStorage.getItem('admin_token')) {
+    if (localStorage.getItem('auth_token')) {
       checkToken()
     }
   }, [])

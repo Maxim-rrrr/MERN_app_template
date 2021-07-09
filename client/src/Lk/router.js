@@ -11,12 +11,12 @@ const LkRouter = () => {
   
   const checkToken = async () => {
     try {
-      const isAuth = await request('/auth/is-auth', 'POST', {}, false, { authorization: localStorage.getItem('admin_token') })
+      const isAuth = await request('/auth/is-auth', 'POST', {}, false)
       
       if (isAuth) {
         setIsAuth(true)
       } else {
-        localStorage.removeItem('token')
+        localStorage.removeItem('auth_token')
       }
 
     } catch (e) {

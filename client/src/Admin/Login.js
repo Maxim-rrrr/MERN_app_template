@@ -80,7 +80,7 @@ const Login = () => {
         password: values.password 
       })
       
-      localStorage.setItem("admin_token", data.token)
+      localStorage.setItem("auth_token", data.token)
       document.location.reload()
 
     } catch (e) {
