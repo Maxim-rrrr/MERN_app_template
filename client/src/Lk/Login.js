@@ -13,6 +13,9 @@ import Button from '@material-ui/core/Button';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import { Box } from '@material-ui/core';
+import { Link } from 'react-router-dom'
+
 
 import { useHttp } from '../hooks/http.hook'
 
@@ -90,62 +93,74 @@ const Login = () => {
   }
 
   return (
-    <div className={classes.root} >
-      <form onSubmit={(event) => handleSubmit(event)} style = {formStyle}>
-        <div>
-          <TextField
-            label="Login"
-            id="standard-start-adornment"
-            className={clsx(classes.margin, classes.textField)}
-            value={values.login}
-            onChange={handleChange("login")}
-          />
-        </div>
+    <main>
+      <header className="header">
+          <Box className="container" m={2}>
+              <Link to="/reg">
+                  <Button variant="contained" color="primary">
+                      Регистрация
+                  </Button>
+              </Link>
+          </Box>
+      </header>
+      <div className={classes.root} >
         
-        <div>
-          <FormControl className={clsx(classes.margin, classes.textField)}>
-            <InputLabel htmlFor="standard-adornment-password">
-              Password
-            </InputLabel>
-            <Input
-              id="standard-adornment-password"
-              type={values.showPassword ? "text" : "password"}
-              value={values.password}
-              onChange={handleChange("password")}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                  >
-                    {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
+        <form onSubmit={(event) => handleSubmit(event)} style = {formStyle}>
+          <div>
+            <TextField
+              label="Login"
+              id="standard-start-adornment"
+              className={clsx(classes.margin, classes.textField)}
+              value={values.login}
+              onChange={handleChange("login")}
             />
-          </FormControl>
-        </div>
+          </div>
+          
+          <div>
+            <FormControl className={clsx(classes.margin, classes.textField)}>
+              <InputLabel htmlFor="standard-adornment-password">
+                Password
+              </InputLabel>
+              <Input
+                id="standard-adornment-password"
+                type={values.showPassword ? "text" : "password"}
+                value={values.password}
+                onChange={handleChange("password")}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+          </div>
 
-        <Button 
-          variant="contained" 
-          color="primary" 
-          type="submit"
-          style = {{
-            display: "block",
-            margin: "auto"
-          }}
-        >
-          Войти
-        </Button>
-      </form>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            type="submit"
+            style = {{
+              display: "block",
+              margin: "auto"
+            }}
+          >
+            Войти
+          </Button>
+        </form>
 
-      <Snackbar open={alert} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error">
-          Неверный логин или пароль
-        </Alert>
-      </Snackbar>
-    </div>
+        <Snackbar open={alert} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error">
+            Неверный логин или пароль
+          </Alert>
+        </Snackbar>
+      </div>
+    </main>
   );
 };
 

@@ -21,19 +21,22 @@ class authController {
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                return res.status(400).json({message: "Ошибка при регистрации", errors})
+                console.log(errors)
+                return res.json({status: 400, message: 'Логин не должен быть пустым, а пароль должен быть длинее 6 символов', errors})
             }
 
             const {username, password} = req.body;
 
             const candidate = await User.findOne({login: username})
             if (candidate) {
-                return res.status(400).json({message: "Пользователь с таким именем уже существует"})
+                return res.json({status: 400, message: "Пользователь с таким именем уже существует"})
             }
 
-            user = await service.registration(username, password)
+            let user = await service.registration(username, password)
+
+            const token = generateAccessToken(user._id, user.roles)
             
-            return res.json({message: "Пользователь успешно зарегистрирован", user: user})
+            return res.json({status: 200, message: "Пользователь успешно зарегистрирован", token})
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Registration error'})

@@ -13,6 +13,9 @@ const App = () => {
         <Route exact path="/lk" component={ LkRouter } />
         <Route exact path="/lk/*" component={ LkRouter } />
 
+        <Route exact path="/reg" component={ LkRouter } />
+        <Route exact path="/reg/*" component={ LkRouter } />
+
         <Route path="/*" component={ Main } />
       </Switch>
     </Router>
