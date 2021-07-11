@@ -2,9 +2,9 @@ import Router from 'express'
 
 import { check } from "express-validator"
 
-import controller from '../controllers/authController.js'
-import authMiddleware from '../middlewares/authMiddleware.js'
-import roleMiddleware from '../middlewares/roleMiddleware.js'
+import controller from './authController.js'
+import authMiddleware from '../../middlewares/authMiddleware.js'
+import roleMiddleware from '../../middlewares/roleMiddleware.js'
 
 
 const router = new Router()

@@ -1,6 +1,6 @@
-import User from '../Schemes/User.js';
-import Role from '../Schemes/Role.js';
-import { USER } from '../roles_list.js';
+import User from '../../Schemes/User.js';
+import Role from '../../Schemes/Role.js';
+import { USER } from '../../roles_list.js';
 import bcrypt from 'bcryptjs';
 
 class authService {

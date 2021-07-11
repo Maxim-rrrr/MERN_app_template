@@ -1,11 +1,11 @@
-import User from '../Schemes/User.js';
+import User from '../../Schemes/User.js';
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import config from "config";
 
-import service from '../services/authService.js'
+import service from './authService.js'
 
 const generateAccessToken = (id, roles) => {
     const payload = {
