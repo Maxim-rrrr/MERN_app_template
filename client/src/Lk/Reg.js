@@ -71,33 +71,30 @@ const Reg = () => {
     setAlert(false);
   };
 
-  const { request } = useHttp()
+  const { request, error } = useHttp()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     if (values.password === values.passwordRepeat) {
-        try {
-            
-          const data = await request('/auth/registration', 'POST', { 
-            username: values.login,
-            password: values.password 
-          })
+      try {
           
-          if (data.status === 200) {
-              localStorage.setItem("auth_token", data.token)
-              document.location.replace("/lk");
-          } else {
-            setAlertMessage(data.message)
-            setAlert(true)
-          }
-    
-        } catch (e) {
-          console.log(e);
-          setAlert(true);
-        }      
+        const data = await request('/auth/registration', 'POST', { 
+          username: values.login,
+          password: values.password 
+        })
+        
+        
+        localStorage.setItem("auth_token", data.token)
+        document.location.replace("/lk");
+  
+      } catch (e) {
+        console.log(e);
+        setAlertMessage(e.message || 'Непредвиденная ошибка')
+        setAlert(true);
+      }      
     } else {
-        setAlertMessage('Пароли не совпадают')
-        setAlert(true)
+      setAlertMessage('Пароли не совпадают')
+      setAlert(true)
     }
   }
 

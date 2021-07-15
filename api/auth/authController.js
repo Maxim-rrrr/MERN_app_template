@@ -22,14 +22,14 @@ class authController {
 
             if (!errors.isEmpty()) {
                 console.log(errors)
-                return res.json({status: 400, message: 'Логин не должен быть пустым, а пароль должен быть длинее 6 символов', errors})
+                return res.status(400).json({message: 'Логин не должен быть пустым, а пароль должен быть длинее 6 символов', errors})
             }
 
             const {username, password} = req.body;
 
             const candidate = await User.findOne({login: username})
             if (candidate) {
-                return res.json({status: 400, message: "Пользователь с таким именем уже существует"})
+                return res.status(400).json({message: "Пользователь с таким именем уже существует"})
             }
 
             let user = await service.registration(username, password)
