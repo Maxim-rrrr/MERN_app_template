@@ -7,6 +7,11 @@
 
   "secret_key": "",
   
-  "admin_login": "",
-  "admin_pass": ""
+  "start_users": [
+    {
+      "login": "admin",
+      "pass": "123123",
+      "role": ["ADMIN"]
+    }
+  ]
 }

@@ -10,7 +10,10 @@
     "client:install": "npm install --prefix client",
     "client:build": "npm run build --prefix client",
     "dev": "cross-env NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
-    "test": "cross-env NODE_ENV=development jest"
+    "test": "cross-env NODE_ENV=development jest",
+
+    "create:roles": "node scripts/createRoles.js",
+    "create:users": "node scripts/createUsers.js"
   },
   "keywords": [
     "express"

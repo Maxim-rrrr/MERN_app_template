@@ -7,6 +7,5 @@
 
   "secret_key": "",
   
-  "admin_login": "",
-  "admin_pass": ""
+  "start_users": []
 }

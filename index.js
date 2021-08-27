@@ -5,9 +5,6 @@ import path from "path";
 
 import logger from "./modules/logger.js";
 import authRouter from './api/auth/authRouter.js'
-import createRoles from "./modules/createRoles.js"
-import { USER, ADMIN } from "./roles_list.js"
-
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import swaggerOptions from "./swaggerOptions.js"
@@ -41,9 +38,6 @@ async function start() {
       useCreateIndex: true,
       useUnifiedTopology: true,
     });
-
-    // Создание ролей пользователей в БД
-    createRoles([ADMIN, USER]);
 
     app.listen(PORT, () =>
       logger.info(`Запуск сервера порт: ${PORT}`)
