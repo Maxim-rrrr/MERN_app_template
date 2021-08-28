@@ -12,7 +12,7 @@ const swaggerOptions = {
     },
     // ['.routes/*.js']
     apis: [
-        "./routers/authRouter.js"
+        "./api/auth/authRouter.js"
     ]
 };
 

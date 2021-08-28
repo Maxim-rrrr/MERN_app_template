@@ -32,7 +32,7 @@ export default async function mail(
     })
 
     let result = await transporter.sendMail({
-      from: `"---" <${config.get('emailSendMessage')}>`,
+      from: `"${config.get('nameInEmail')}" <${config.get('emailSendMessage')}>`,
       to,
       subject,
       text,

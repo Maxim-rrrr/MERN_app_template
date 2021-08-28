@@ -28,6 +28,7 @@
 *port* - Порт запуска приложения  
 *url_main_page* - Url главной страницы  
 *mongoUrl* - Ссылка подключения к MongoDB [База данных](#База_данных)  
+*nameInEmail* - Название организации указанное а поле "от кого" при отправке сообщения [Отправка сообщений Email](#Отправка_сообщений_Email)   
 *emailSendMessage* - Логин аккаунта для отправки сообщения [Отправка сообщений Email](#Отправка_сообщений_Email)  
 *passSendMessage* - Пароль аккаунта для отправки сообщения [Отправка сообщений Email](#Отправка_сообщений_Email)  
 *secret_key* - Секретный ключ приложения, сгенерировать любой, симвалов 30 хватит   
@@ -239,9 +240,146 @@ logger.error('ERROR') // Лог об ошибки
 ...
 ```
 # Middlewares <a name="Middlewares"></a>
+Middlewares лежат в папке *./middlewares*  
+Изначально есть уже готовые middlewares:    
+
+*authMiddleware.js* - Проверка на авторизованность пользователя, проверяет *req.headers.authorization* на наличие jwt токена и его валиднось, записывае в поле *req.user* информацию о пользователе из токена
+Пример:
+```
+router.post('/is-auth', authMiddleware(), async (req, res) => { res.send(true) })
+```  
+
+*roleMiddleware.js* - Проверка авторизация и роли пользователя, проверяет *req.headers.authorization* на наличие jwt токена и зашифрованных там ролей  
+Привет:
+```
+router.post('/is-admin', roleMiddleware(["ADMIN"]), async (req, res) => { res.send(true) })
+```
+
+*fileStorage.js* - Сохранение файлов присылаемых с клиенской части с помощью *multer* [Хранение пользовательских файлов](#Хранение_пользовательских_файлов)
+
 # Хранение пользовательских файлов <a name="Хранение_пользовательских_файлов"></a>
+
+Для начала нужно создать в корневой папке проекта папку *uploads*
+
+Сохнанение пользовательских файлов прилетающих в запросах сохраняем через библиотеку [Multer](https://github.com/expressjs/multer/blob/master/doc/README-ru.md)  
+На основе библиотеке написан middleware *fileStorage.js*
+
+Все файлы будут сохраняться в папке *./uploads*, отправлять надо запрос **без** заголовка  *headers['Content-Type'] = 'application/json'* и в формате **formData**
+
+Пример:
+```
+import express from "express";
+import upload from './modules/fileStorage.js'
+
+const app = express()
+
+app.post('/profile', upload.single('avatar'), function (req, res, next) {
+  // req.file - файл `avatar`
+  // req.body сохранит текстовые поля, если они будут
+})
+
+app.post('/photos/upload', upload.array('photos', 12), function (req, res, next) {
+  // req.files - массив файлов `photos`
+  // req.body сохранит текстовые поля, если они будут
+})
+
+const cpUpload = upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
+app.post('/cool-profile', cpUpload, function (req, res, next) {
+  // req.files - объект (String -> Array), где fieldname - ключ, и значение - массив файлов
+  //
+  // например:
+  //  req.files['avatar'][0] -> File
+  //  req.files['gallery'] -> Array
+  //
+  // req.body сохранит текстовые поля, если они будут
+})
+```
+
 # Swagger <a name="Swagger"></a>
+Swagger запускается по ссылке http://localhost:4000/api-docs  
+Конфиг Swagger *./swaggerOptions.js*  
+
+Заполняем комментарии в файле роутера и добавляем этот файл в роутерам api в файле *./swaggerOptions.js* 
+
+Пример комментария:
+```
+/**
+ * @swagger
+ * /auth/registration:
+ *  post:
+ *    description: Регистрация новых пользователей
+ *  parameters:
+ *    - name: username
+ *      in: data
+ *      description: Уникальное имя пользователя, логин, не может быть пустой строкой
+ *      required: true
+ *      schema:
+ *        type: string
+ *        format: string
+ *    - name: password
+ *      in: data
+ *      description: Пароль пользователь, должен быть длиннее 6 символов
+ *      required: true
+ *      schema:
+ *        type: string
+ *        format: string
+ *  responses:
+ *    '200':
+ *      description: OK
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message: 
+ *                type: string
+ *    '400':
+ *      description: Вернётся при нарушении валидации или при ситуации, что пользователь с таким именем уже есть { message }
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message: 
+ *                type: string
+ *    '500':
+ *      description: Registration error { message }
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              message: 
+ *                type: string
+ *  
+ */
+router.post('/registration', [
+    check('username', "Имя пользователя не может быть пустым").notEmpty(),
+    check('password', "Пароль должен быть больше 6 символов").isLength({min:6})
+], controller.registration)
+```
+
+
 # Отправка сообщений Email <a name="Отправка_сообщений_Email"></a>
+Заполняем поля *nameInEmail*, *emailSendMessage*, *passSendMessage* в файле конфигурации [Поля конфига](#Поля_конфига)  
+
+Создать почту лучше mail.ru, иначе может не заработать  
+
+Для отправки сообщения есть функция в в файле *./modules/mail.js*  
+На вход функция принимает 
+```
+/**
+ * Функция отправки сообщений на почту
+ *
+ * @param {string} to Email получателя
+ * @param {string} subject Заголовок
+ * @param {string} text Текст письма
+ * @param {string} html Что-то форматированное через HTML
+ * @param {Array} attachments  Список файлов прикреплённых к письму
+ * 
+ * @returns { Promise<boolean> }
+ */
+ ```
 # Система авторизации <a name="Система_авторизации"></a>
 ## Роли <a name="Роли"></a>
 

@@ -2,6 +2,7 @@
   "port": 4000,
   "url_main_page": "localhost:4000",
   "mongoUrl": "",
+  "nameInEmail": "",
   "emailSendMessage": "",
   "passSendMessage": "",
 
