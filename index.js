@@ -14,6 +14,8 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 const app = express();
 
 app.use(express.json())
+
+// API роуты
 app.use("/auth", authRouter)
 
 app.use("/uploads", express.static("uploads"));

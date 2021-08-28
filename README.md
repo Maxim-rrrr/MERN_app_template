@@ -5,12 +5,15 @@
     1. [Поля конфига](#Поля_конфига)
 2. [Запуск приложения](#Запуск_приложения)
 3. [База данных](#База_данных)
+    1. [Подключение БД](#Подключение_БД)
+    2. [Создание схем](#Создание_схем)
 4. [API](#API)
 5. [Система логирования](#Система_логирования)
-6. [Хранение пользовательских файлов](#Хранение_пользовательских_файлов)
-7. [Swagger](#Swagger)
-8. [Отправка сообщений Email](#Отправка_сообщений_Email)
-9. [Система авторизации](#Система_авторизации)
+6. [Middlewares](#Middlewares)
+7. [Хранение пользовательских файлов](#Хранение_пользовательских_файлов)
+8. [Swagger](#Swagger)
+9. [Отправка сообщений Email](#Отправка_сообщений_Email)
+10. [Система авторизации](#Система_авторизации)
     1. [Роли](#Роли)
     2. [Создание пользователей](#Создание_пользователей)
 
@@ -28,10 +31,10 @@
 *emailSendMessage* - Логин аккаунта для отправки сообщения [Отправка сообщений Email](#Отправка_сообщений_Email)  
 *passSendMessage* - Пароль аккаунта для отправки сообщения [Отправка сообщений Email](#Отправка_сообщений_Email)  
 *secret_key* - Секретный ключ приложения, сгенерировать любой, симвалов 30 хватит   
-*start_users* - Создание пользователей через конфиг [Создание пользователей](#Создание_пользователей)
-*logger_console* - Boolean, писать логи в консоль [Система логирования](#Система_логирования)
-*logger_file* - Boolean, писать логи в файл [Система логирования](#Система_логирования)
-*logger_mongoDB* - Boolean, писать логи в Базу данных [Система логирования](#Система_логирования)
+*start_users* - Создание пользователей через конфиг [Создание пользователей](#Создание_пользователей)  
+*logger_console* - Boolean, писать логи в консоль [Система логирования](#Система_логирования)  
+*logger_file* - Boolean, писать логи в файл [Система логирования](#Система_логирования)  
+*logger_mongoDB* - Boolean, писать логи в Базу данных [Система логирования](#Система_логирования)  
 
 # Запуск приложения <a name="Запуск_приложения"></a>
 Установка зависимостей для сервера
@@ -44,12 +47,173 @@ npm run client:install
 ```
 # База данных <a name="База_данных"></a>
 База данных MongoDB  
+
+## Подключение БД <a name="Подключение_БД"></a>
 Для подключения БД нужно указать ссылка на подключение в поле *mongoUrl* в файле конфигурации [Поля конфига](#Поля_конфига)
+
+## Создание схем <a name="Создание_схем"></a>
+Создание схем документов БД в папке *Schemes*  
+[Статья по созданию моделей](https://metanit.com/web/nodejs/6.7.php)  
+Пример:
+```
+import pkg from 'mongoose';
+const {Schema, model} = pkg;
+
+
+const User = new Schema({
+    login: {type: String, unique: true, required: true},
+    password: {type: String, required: true},
+    roles: [{type: String, ref: 'Role'}]
+})
+
+export default model('User', User)
+```
 # API <a name="API"></a>
+Для создания API points есть папка *./api*
+
+Создаём папку с названием роута, а в нём три файла: *Controller*, *Router*, *Service*  
+
+Пример:
+```
+api
+└───auth
+│   │   authController.js
+│   │   authRouter.js
+│   │   authService.js
+```
+
+В Router определяем роуты данной ветки API  
+Пример: 
+```
+import Router from 'express'
+import { check } from "express-validator"
+import controller from './authController.js'
+
+const router = new Router()
+
+router.post('/registration', [
+    check('username', "Имя пользователя не может быть пустым").notEmpty(),
+    check('password', "Пароль должен быть больше 6 символов").isLength({min:6})
+], controller.registration)
+
+router.post('/login', controller.login)
+
+export default router
+```
+И подключаем Router к приложению в файле ./index.js  
+Пример:
+```
+import authRouter from './api/auth/authRouter.js'
+
+app.use("/auth", authRouter) // Втавлять после app.use(express.json())
+```
+
+
+И подключаем к роутам методы контроллера  
+Пример контроллера: 
+```
+import User from '../../Schemes/User.js';
+
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { validationResult } from 'express-validator';
+import config from "config";
+
+import service from './authService.js'
+
+const generateAccessToken = (id, roles) => {
+    const payload = {
+        id,
+        roles
+    }
+    return jwt.sign(payload, config.get("secret_key"), {expiresIn: "24h"} )
+}
+
+class authController {
+    async registration(req, res) {
+        try {
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty()) {
+                console.log(errors)
+                return res.status(400).json({message: 'Логин не должен быть пустым, а пароль должен быть длинее 6 символов', errors})
+            }
+
+            const {username, password} = req.body;
+
+            const candidate = await User.findOne({login: username})
+            if (candidate) {
+                return res.status(400).json({message: "Пользователь с таким именем уже существует"})
+            }
+
+            let user = await service.registration(username, password)
+
+            const token = generateAccessToken(user._id, user.roles)
+            
+            return res.json({status: 200, message: "Пользователь успешно зарегистрирован", token})
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Registration error'})
+        }
+    }
+
+    async login(req, res) {
+        try {
+            const {login, password} = req.body
+
+            const user = await User.findOne({login})
+            if (!user) {
+                return res.status(400).json({message: `Пользователь ${login} не найден`})
+            }
+
+            const validPassword = bcrypt.compareSync(password, user.password)
+            if (!validPassword) {
+                return res.status(400).json({message: `Введен неверный пароль`})
+            }
+
+            const token = generateAccessToken(user._id, user.roles)
+
+            return res.json({token})
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Login error'})
+        }
+    }
+}
+
+export default new authController()
+
+```
+
+*Service* - Нужен для выноса вычисляемой логики из контроллеров или общих функций для нескольких API points в этой ветке
+
+Пример Service:
+```
+import User from '../../Schemes/User.js';
+import Role from '../../Schemes/Role.js';
+import { USER } from '../../roles_list.js';
+import bcrypt from 'bcryptjs';
+
+class authService {
+    async registration(username, password) {
+        const hashPassword = bcrypt.hashSync(password, 7);
+
+        const userRole = await Role.findOne({value: USER})
+        const user = new User({login: username, password: hashPassword, roles: [userRole.value]})
+        
+        await user.save()
+
+        return user
+    }
+}
+
+export default new authService()
+```
+
 
 # Система логирования <a name="Система_логирования"></a>
 Система логирования *winston*  
-[Статья поможет если, что переписать система логирования](https://www.8host.com/blog/logirovanie-prilozheniya-node-js-s-pomoshhyu-winston/)
+[Статья поможет если, что переписать систему логирования](https://www.8host.com/blog/logirovanie-prilozheniya-node-js-s-pomoshhyu-winston/)
 ## Настройка логера 
 В файле конфигурации заполняем полья *logger_console*, *logger_file*, *logger_mongoDB* для определения места записи логов [Поля конфига](#Поля_конфига)
 
@@ -74,6 +238,7 @@ logger.info('INFO') // Информационный лог
 logger.error('ERROR') // Лог об ошибки
 ...
 ```
+# Middlewares <a name="Middlewares"></a>
 # Хранение пользовательских файлов <a name="Хранение_пользовательских_файлов"></a>
 # Swagger <a name="Swagger"></a>
 # Отправка сообщений Email <a name="Отправка_сообщений_Email"></a>
