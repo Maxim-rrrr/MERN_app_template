@@ -6,9 +6,11 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index",
     "server": "nodemon index",
+
     "client": "npm run start --prefix client",
     "client:install": "npm install --prefix client",
     "client:build": "npm run build --prefix client",
+
     "dev": "cross-env NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
     "test": "cross-env NODE_ENV=development jest",
 
@@ -18,7 +20,7 @@
   "keywords": [
     "express"
   ],
-  "author": "Maxim Semenov",
+  "author": "Maxim Semenov <Kewin.rrrr@gmail.com>",
   "license": "ISC",
   "type": "module",
   "dependencies": {

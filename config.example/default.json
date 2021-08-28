@@ -13,5 +13,9 @@
       "pass": "123123",
       "role": ["ADMIN"]
     }
-  ]
+  ],
+
+  "logger_console": true,
+  "logger_file": true,
+  "logger_mongoDB": false
 }

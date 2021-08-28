@@ -7,5 +7,9 @@
 
   "secret_key": "",
   
-  "start_users": []
+  "start_users": [],
+
+  "logger_console": true,
+  "logger_file": true,
+  "logger_mongoDB": true
 }
