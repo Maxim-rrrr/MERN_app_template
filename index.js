@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import config from "config";
 import path from "path";
+import apiLogger from "./middlewares/apiLogger.js";
 
 import logger from "./modules/logger.js";
 import authRouter from './api/auth/authRouter.js'
@@ -14,7 +15,7 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 const app = express();
 
 app.use(express.json())
-
+app.use(apiLogger)
 // API роуты
 app.use("/auth", authRouter)
 
