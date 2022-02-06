@@ -15,7 +15,12 @@
     "test": "cross-env NODE_ENV=development jest",
 
     "create:roles": "node scripts/createRoles.js",
-    "create:users": "node scripts/createUsers.js"
+    "create:users": "node scripts/createUsers.js",
+    "create:roles:dev": "node scripts/createRoles.js",
+    "create:users:dev": "node scripts/createUsers.js",
+
+    "create:roles:prod": "cross-env NODE_ENV=production node scripts/createRoles.js",
+    "create:users:prod": "cross-env NODE_ENV=production node scripts/createUsers.js"
   },
   "keywords": [
     "express"

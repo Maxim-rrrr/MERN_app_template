@@ -399,6 +399,14 @@ export const ALL_ROLES = [
 ```
 npm run create:roles
 ```
+или
+```
+npm run create:roles:dev
+```
+с использование файла конфигурации для продакшена
+```
+npm run create:roles:prod
+```
 
 ## Создание пользователей <a name="Создание_пользователей"></a>
 
@@ -418,4 +426,11 @@ npm run create:roles
 ```
 npm run create:users
 ```
-
+или
+```
+npm run create:users:dev
+```
+с использование файла конфигурации для продакшена
+```
+npm run create:users:prod
+```
