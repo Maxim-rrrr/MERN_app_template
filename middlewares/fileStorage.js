@@ -1,5 +1,6 @@
-const multer = require('multer')
-const moment = require('moment')
+import multer from 'multer'
+import moment from 'moment'
+
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
